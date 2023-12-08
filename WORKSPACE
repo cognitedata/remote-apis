@@ -50,9 +50,9 @@ protobuf_deps()
 # Needed for C++ gRPC.
 http_archive(
     name = "com_github_grpc_grpc",
-    sha256 = "b391a327429279f6f29b9ae7e5317cd80d5e9d49cc100e6d682221af73d984a6",
-    strip_prefix = "grpc-93e8830070e9afcbaa992c75817009ee3f4b63a0",  # v1.24.3 with fixes
-    urls = ["https://github.com/grpc/grpc/archive/93e8830070e9afcbaa992c75817009ee3f4b63a0.zip"],
+    sha256 = "197f62bc6a4fc67b736384307d1b694010e304753b2dd2f839ff3a993a540fab",
+    strip_prefix = "grpc-1.48.1",
+    urls = ["https://github.com/grpc/grpc/archive/refs/tags/v1.48.1.zip"],
 )
 
 # Pull in all gRPC dependencies.
@@ -70,12 +70,6 @@ upb_deps()
 apple_rules_dependencies()
 
 apple_support_dependencies()
-
-load("@upb//bazel:repository_defs.bzl", "bazel_version_repository")
-
-bazel_version_repository(
-    name = "bazel_version",
-)
 
 bind(
     name = "grpc_cpp_plugin",
