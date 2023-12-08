@@ -10,12 +10,18 @@ or rules_cc so that the Bazel Remote APIs repository can be further decoupled
 from language-specific concerns.
 """
 
-load("@com_github_grpc_grpc//bazel:protobuf.bzl", "get_include_protoc_args")
+load("@com_github_grpc_grpc//bazel:protobuf.bzl", "get_include_directory")
 
 _EXT_PROTO = ".proto"
 _EXT_PROTODEVEL = ".protodevel"
 _EXT_GRPC_HDR = ".grpc.pb.h"
 _EXT_GRPC_SRC = ".grpc.pb.cc"
+
+def _get_include_protoc_args(includes):
+    return [
+        "--proto_path={}".format(get_include_directory(include))
+        for include in includes
+    ]
 
 def _drop_proto_ext(name):
     if name.endswith(_EXT_PROTO):
@@ -83,7 +89,7 @@ def _cc_grpc_codegen(ctx):
     protoc_args.add("--plugin", "protoc-gen-grpc=" + plugin.path)
     protoc_args.add("--grpc_out", protoc_out.path)
 
-    protoc_args.add_all(get_include_protoc_args(proto_imports))
+    protoc_args.add_all(_get_include_protoc_args(proto_imports))
     protoc_args.add_all(proto_srcs, map_each = _proto_srcname)
 
     ctx.actions.run(
@@ -110,7 +116,7 @@ cc_grpc_codegen = rule(
             cfg = "host",
         ),
         "_protoc": attr.label(
-            default = Label("//external:protocol_compiler"),
+            default = Label("@com_google_protobuf//:protoc"),
             executable = True,
             cfg = "host",
         ),
